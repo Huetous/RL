@@ -1,7 +1,6 @@
 import torch
 import numpy as np
 from collections import namedtuple
-from heapq import heappush
 
 Stats = namedtuple("Stats", ["EpRet", "EpLen"])
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -87,7 +86,6 @@ class UniformReplayBuffer:
         h, w = self.obs_buf[0].shape[0:2]
         return torch.tensor(frames.reshape(-1, h, w), dtype=torch.float32).unsqueeze(0) / 255.0
 
-
 # # paper - https://arxiv.org/pdf/1511.05952.pdf
 # # TODO: how to maintain heap index of each transition, how to override elements in heap?
 # class RankBasedPrioritizedReplay(UniformReplayBuffer):
@@ -125,4 +123,3 @@ class UniformReplayBuffer:
 #             new_priority = new_priority.item()
 #             self.max_priority = max(self.max_priority, new_priority)
 #             self.heap[index.int().item()][0] = new_priority  # heap[i] = [priority, index_in_buf]
-

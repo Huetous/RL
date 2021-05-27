@@ -1,5 +1,5 @@
 from tqdm import tqdm
-from RL.big_guys.algos.DQN_based.DQN.ReplayBuffer import UniformReplayBuffer, Stats, RankBasedPrioritizedReplay
+from RL.big_guys.algos.DQN_based.DQN.ReplayBuffer import UniformReplayBuffer, Stats
 from RL.big_guys.algos.DQN_based.DQN.Agent import Agent
 
 import numpy as np
@@ -23,10 +23,10 @@ def DQN(env_name, seed=0, epochs=100, max_ep_len=1000, gamma=0.99, q_lr=1e-3,
     n_actions = env.action_space.n
 
     buf_cls = UniformReplayBuffer
-    if priority is "rank":
-        buf_cls = RankBasedPrioritizedReplay
-    if priority is "prop":
-        pass
+    # if priority is "rank":
+    #     buf_cls = RankBasedPrioritizedReplay
+    # if priority is "prop":
+    #     pass
 
     buf = buf_cls(buffer_size, obs_dim, k_frames, **buf_kwargs)
     agent = Agent(obs_dim[-1] * k_frames, n_actions, q_lr, gamma, eps_sched,
@@ -64,14 +64,11 @@ def DQN(env_name, seed=0, epochs=100, max_ep_len=1000, gamma=0.99, q_lr=1e-3,
         if t >= update_after and t % update_every == 0:
             batch = buf.sample_batch(batch_size)
             changes = agent.update_main(batch)
-            if changes is not None and isinstance(buf, RankBasedPrioritizedReplay):
-                buf.update_priorities(changes)
+            # if changes is not None and isinstance(buf, RankBasedPrioritizedReplay):
+            #     buf.update_priorities(changes)
 
         if (t + 1) % update_target_every == 0:
             agent.update_target()
 
     return stats, agent
 
-
-DQN(env_name="Berzerk-v0", epochs=1, priority="rank", buf_kwargs={"alpha": 0.5},
-    eps_sched={"start": 0.9, "end": 0.001, "decay": 1000})

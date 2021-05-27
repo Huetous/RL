@@ -1,5 +1,4 @@
 import math
-from toss.layers import Flatten
 import torch.nn as nn
 from toss.architectures.SimpleCNN import SimpleCNN
 
